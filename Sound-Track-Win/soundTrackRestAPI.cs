@@ -72,7 +72,15 @@ namespace Sound_Track_Win
 
             public SoundTrackRestHandler(string IP_Address, string Port = "5000")
             {
-                apiRequestClient.BaseAddress = new Uri("http://" + IP_Address + ":" + Port + "/");
+                apiRequestClient.BaseAddress = new Uri(string.Format("http://{0}:{1}/", IP_Address, Port));
+                apiRequestClient.DefaultRequestHeaders.Accept.Clear();
+                apiRequestClient.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            }
+
+            public SoundTrackRestHandler(string IP_Address, int Port = 5000)
+            {
+                apiRequestClient.BaseAddress = new Uri(string.Format("http://{0}:{1}/", IP_Address, Port));
                 apiRequestClient.DefaultRequestHeaders.Accept.Clear();
                 apiRequestClient.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));

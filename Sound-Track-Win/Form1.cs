@@ -33,7 +33,7 @@ namespace Sound_Track_Win
         {
             InitializeComponent();
 
-            audioHandle = new AudioReceiver("Blitz");
+            audioHandle = new AudioReceiver("Freedom");
 
             //stRest = new SoundTrackRestHandler("192.168.0.107");
 
@@ -80,7 +80,7 @@ namespace Sound_Track_Win
             }
         }
 
-        private void updateStatusText(string status)
+        private void UpdateStatusText(string status)
         {
             statusDisplay.Invoke((MethodInvoker)delegate
             {
@@ -89,11 +89,11 @@ namespace Sound_Track_Win
             });
         }
 
-        private void formST_Load(object sender, EventArgs e)
+        private void FormST_Load(object sender, EventArgs e)
         {
-            audioWorker.DoWork += audioWork;
+            audioWorker.DoWork += AudioWork;
             audioWorker.RunWorkerAsync();
-            restBTWorker.DoWork += restBTWork;
+            restBTWorker.DoWork += RestBTWork;
             restBTWorker.RunWorkerAsync();
         }
 
@@ -101,15 +101,27 @@ namespace Sound_Track_Win
         //   Methods for background work
         //----------------------------------
 
-        private void audioWork(object sender, DoWorkEventArgs e)
+        private void AudioWork(object sender, DoWorkEventArgs e)
         {
 
         }
 
-        private void restBTWork(object sender, DoWorkEventArgs e)
+        private void RestBTWork(object sender, DoWorkEventArgs e)
         {
 
-            updateStatusText("Connecting to server...");
+            UpdateStatusText("Connecting to server...");
+
+            List<ServerResource> servers = audioHandle.PollServers();
+            string serverNames = "";
+            if (servers != null)
+            {
+                for (int i = 0; i < servers.Count; i++)
+                {
+                    serverNames += string.Format("{0} - {1}:{2} ({3})\n", servers[i].Name, servers[i].IP.ToString(), servers[i].CommPort, servers[i].ID);
+                }
+            }
+            MessageBox.Show(serverNames);
+
             TimeResource serverTime = null;
 
             while (serverTime == null)
@@ -117,13 +129,13 @@ namespace Sound_Track_Win
                 try { serverTime = stRest.GetServerTime(); }
                 catch
                 {
-                    updateStatusText("Connection failed, retrying...");
+                    UpdateStatusText("Connection failed, retrying...");
                     Thread.Sleep(5000);
-                    updateStatusText("Connecting to server...");
+                    UpdateStatusText("Connecting to server...");
                 }
 
             }
-            updateStatusText("Connected");
+            UpdateStatusText("Connected");
             if (rbOutput.Checked)
             {
 
